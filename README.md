@@ -22,6 +22,11 @@ Install Airflow
 helm install airflow apache-airflow/airflow --values values/airflow.yaml --namespace airflow --create-namespace
 ```
 
+Upgrade values if change
+```
+helm upgrade --install airflow apache-airflow/airflow -f values/airflow.yaml --namespace airflo
+```
+
 ### See install status
 ```
 helm status airflow
@@ -34,25 +39,28 @@ You can use helm to see the next steps
 ```
 helm status airflow
 ```
-like making a port-forwading to service
+#### Kubectl
 ```
 kubectl port-forward svc/airflow-webserver 8080:8080 --namespace airflow
+```
+#### Minikube
+Use minikube to tunnel the access for inside the cluster. This output a url, paste it on browser and access admin
+```
+minikube service airflow-webserver --namespace airflow --url
 ```
 
 ### Set GIT-SYNC in Airflow
 It is setted at [Airflow Helm Git-Sync oficial page](https://airflow.apache.org/docs/helm-chart/stable/manage-dags-files.html)
+Set the following variables in [airflow helm config](values/airflow.yaml)
 ```
-helm upgrade --install airflow apache-airflow/airflow \
-  --set dags.persistence.enabled=true \
-  --set dags.gitSync.enabled=true
+dags.persistence.enabled=true
+dags.gitSync.enabled=true
+gitSync.repo= # your git repo https endpoint
 ```
+Note that the dot notiation is identiation on yaml
 
-## Setup GitLab to make a git sync 
+## Access to Airflow webserver UI
 
-```
-helm repo add gitlab http://charts.gitlab.io/
-helm install my-gitlab gitlab/gitlab -f values/gitlab.yaml  --namespace gitlab --create-namespace
-```
 
 ## Todo
 1. Usage of a dynamic webserver secret key detected. We recommend a static webserver secret key instead. See the Helm Chart Production Guide for more details.
